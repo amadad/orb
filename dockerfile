@@ -1,4 +1,4 @@
-FROM python:3.11-slim
+FROM --platform=linux/amd64 python:3.9-slim
 
 WORKDIR /app
 
@@ -20,16 +20,16 @@ RUN pip install --upgrade pip
 
 # Copy requirements first for better caching
 COPY requirements.txt .
-RUN pip install -r requirements.txt
+RUN pip install -r requirements.txt gunicorn
 
-# Copy the application code
-COPY my_digital_being/ my_digital_being/
+# Copy the entire application
+COPY . .
 
 # Create necessary directories
-RUN mkdir -p my_digital_being/config
+RUN mkdir -p my_digital_being/config my_digital_being/static my_digital_being/activities my_digital_being/skills
 
 # Expose port for web UI
 EXPOSE 8000
 
-# Set the default command
-CMD ["python", "-m", "my_digital_being.server"]
+# Use a simpler command that's more likely to work
+CMD gunicorn app:app --bind 0.0.0.0:8000
