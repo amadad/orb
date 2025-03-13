@@ -10,7 +10,7 @@ def test_http_server_loads():
     Start the server, check if HTTP is available, then stop.
     """
     process = subprocess.Popen(
-        ["python", "my_digital_being/server.py"],
+        ["python", "-m", "my_digital_being.server"],
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE
     )
@@ -20,13 +20,11 @@ def test_http_server_loads():
 
     try:
         response = requests.get("http://localhost:8000")
-        assert response.status_code == 200, "Server didn't return 200 on /"
+        assert response.status_code == 200, "Server didn't return 200 OK"
+        assert "Digital Being" in response.text, "Expected 'Digital Being' in response"
     finally:
         process.terminate()
         process.wait()
-
         stdout, stderr = process.communicate()
-        print("Server stdout:")
-        print(stdout.decode())
-        print("Server stderr:")
-        print(stderr.decode())
+        print("Server stdout:", stdout.decode())
+        print("Server stderr:", stderr.decode())

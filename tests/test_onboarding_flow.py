@@ -16,7 +16,7 @@ def test_onboarding_flow():
     """
 
     process = subprocess.Popen(
-        ["python", "my_digital_being/server.py"],
+        ["python", "-m", "my_digital_being.server"],
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE
     )
@@ -100,10 +100,8 @@ def test_onboarding_flow():
         process.wait()
 
         stdout, stderr = process.communicate()
-        print("Server stdout:")
-        print(stdout.decode())
-        print("Server stderr:")
-        print(stderr.decode())
+        print("Server stdout:", stdout.decode())
+        print("Server stderr:", stderr.decode())
 
         if "driver" in locals():
             driver.quit()

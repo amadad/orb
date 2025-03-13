@@ -10,7 +10,7 @@ def test_server_loads():
     Start the server, check if HTTP is available, then stop.
     """
     process = subprocess.Popen(
-        ["python", "my_digital_being/server.py"],
+        ["python", "-m", "my_digital_being.server"],
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE
     )
@@ -32,7 +32,7 @@ async def test_websocket():
     Start the server, then test the WebSocket in one go.
     """
     process = subprocess.Popen(
-        ["python", "my_digital_being/server.py"],
+        ["python", "-m", "my_digital_being.server"],
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE
     )

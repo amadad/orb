@@ -12,7 +12,7 @@ def test_onboarding_modal():
     Simplified test to ensure the page actually loads in Selenium.
     """
     process = subprocess.Popen(
-        ["python", "my_digital_being/server.py"],
+        ["python", "-m", "my_digital_being.server"],
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE
     )
@@ -32,20 +32,23 @@ def test_onboarding_modal():
         # Navigate to server's root URL
         driver.get("http://localhost:8000")
 
-        # Wait for body to appear
-        wait = WebDriverWait(driver, 10)  # Wait up to 10 seconds
-        body = wait.until(EC.presence_of_element_located((By.TAG_NAME, "body")))
-        assert body is not None, "Body did not load in the browser"
+        # Wait for the page to load and find the Setup Wizard button
+        setup_wizard_button = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.ID, "open-setup-wizard"))
+        )
+
+        # Check if it's there
+        assert setup_wizard_button.is_displayed(), "Setup wizard button should be visible"
 
     finally:
+        # Clean up resources
+        try:
+            driver.quit()
+        except:
+            pass
+
         process.terminate()
         process.wait()
-
         stdout, stderr = process.communicate()
-        print("Server stdout:")
-        print(stdout.decode())
-        print("Server stderr:")
-        print(stderr.decode())
-
-        if "driver" in locals():
-            driver.quit()
+        print("Server stdout:", stdout.decode())
+        print("Server stderr:", stderr.decode())

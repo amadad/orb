@@ -12,7 +12,7 @@ async def test_websocket_basic():
     Start the server, then test the WebSocket in one go.
     """
     process = subprocess.Popen(
-        ["python", "my_digital_being/server.py"],
+        ["python", "-m", "my_digital_being.server"],
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE
     )
@@ -33,7 +33,5 @@ async def test_websocket_basic():
         process.terminate()
         process.wait()
         stdout, stderr = process.communicate()
-        print("Server stdout:")
-        print(stdout.decode())
-        print("Server stderr:")
-        print(stderr.decode())
+        print("Server stdout:", stdout.decode())
+        print("Server stderr:", stderr.decode())
