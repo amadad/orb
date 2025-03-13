@@ -24,6 +24,10 @@ twilio>=9.4.1
 pytest>=7.0.0
 pytest-asyncio>=0.20.0
 
+# Web server
+gunicorn>=20.1.0
+uvicorn>=0.25.0
+
 # Might be needed based on Pippin framework functionality
 # asyncio is part of Python standard library, no need to install separately
 # logging is part of Python standard library, no need to install separately
