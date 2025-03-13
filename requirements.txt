@@ -1,24 +1,29 @@
 # requirements.txt
 
-composio-openai>=0.1.0
-openai>=0.27.0
-litellm>1.58.0
+# Core dependencies
+composio-core>=0.7.7
+composio-openai>=0.7.7
+openai>=1.66.3
+litellm>=1.63.8
+python-dotenv>=1.0.1
 
-# Websocket server support
+# Web and API related
+flask-login>=0.6.3
+flask-wtf>=1.2.2
+oauthlib>=3.2.2
+requests>=2.32.3
+requests-oauthlib>=2.0.0
+aiohttp>=3.8.0
 websockets>=12.0
 
-# Env file loading
-python-dotenv>=0.21.0
+# Utilities
+trafilatura>=2.0.0
+twilio>=9.4.1
 
-# Replit environment, if needed
-replit>=3.2.2
+# Testing
+pytest>=7.0.0
+pytest-asyncio>=0.20.0
 
-# For Twitter OAuth in skill_x_api.py
-requests>=2.28.0
-requests_oauthlib>=1.3.1
-
-pytest
-pytest-asyncio
-requests
-aiohttp
-asyncio
+# Might be needed based on Pippin framework functionality
+# asyncio is part of Python standard library, no need to install separately
+# logging is part of Python standard library, no need to install separately

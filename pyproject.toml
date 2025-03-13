@@ -1,23 +1,38 @@
 [project]
-name = "my-digital-being"
+name = "digital-orb"
 version = "0.1.0"
 description = "A sophisticated Python framework for creating intelligent digital entities"
 requires-python = ">=3.11"
 dependencies = [
-    "composio-core>=0.6.7",
-    "composio-openai==0.6.7",
+    # Core dependencies
+    "composio-core>=0.7.7",
+    "composio-openai>=0.7.7",
+    "openai>=1.66.3",
+    "litellm>=1.63.8",
+    "python-dotenv>=1.0.1",
+    
+    # Web and API related
     "flask-login>=0.6.3",
     "flask-wtf>=1.2.2",
     "oauthlib>=3.2.2",
-    "openai>=1.58.1",
-    "python-dotenv>=1.0.1",
-    "replit>=4.1.0",
+    "requests>=2.32.3",
     "requests-oauthlib>=2.0.0",
+    "aiohttp>=3.8.0",
+    "websockets>=12.0",
+    
+    # Utilities
     "trafilatura>=2.0.0",
     "twilio>=9.4.1",
-    "websockets==12.0",
 ]
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["my_digital_being*"]
+include = ["digital_orb*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = "test_*.py"

@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 @activity(
     name="post_recent_memories_tweet",
     energy_cost=0.4,
-    cooldown=10000,  # e.g. ~2.7 hours for testing (adjust as needed)
+    cooldown=28800,  # 8 hours
     required_skills=["twitter_posting"],
 )
 class PostRecentMemoriesTweetActivity(ActivityBase):
