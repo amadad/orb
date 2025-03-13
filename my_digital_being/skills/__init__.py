@@ -17,9 +17,17 @@ import logging
 from importlib import import_module
 from types import ModuleType
 from typing import Dict, Any, Optional
+import sys
+import os
+from pathlib import Path
 
 logger = logging.getLogger(__name__)
 
+# Add the my_digital_being directory to sys.path
+# This makes direct 'framework' imports work in skill files
+parent_dir = Path(__file__).parent.parent
+if str(parent_dir) not in sys.path:
+    sys.path.append(str(parent_dir))
 
 class SkillRegistry:
     """Central registry for all skills in the system."""
