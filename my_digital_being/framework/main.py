@@ -60,7 +60,7 @@ class DigitalBeing:
 
         # Register API key requirements from skills_config
         skills_config = self.configs.get("skills_config", {})
-        from framework.api_management import api_manager  # Avoid top-level import loops
+        from .api_management import api_manager  # Avoid top-level import loops
 
         logger.info("Registering API key requirements for skills...")
         for skill_name, maybe_skill_dict in skills_config.items():

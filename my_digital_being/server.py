@@ -26,10 +26,13 @@ from flask import Flask, jsonify
 # to make sure INFO level logs are printed (Otherwise it gets set to WARN)
 logging.basicConfig(level=logging.INFO)
 
+# Initialize Flask app for HTTP routes
+app = Flask(__name__)
+
 # Import api_manager at top-level (not again inside any function)
-from .framework.api_management import api_manager
-from .framework.main import DigitalBeing
-from .framework.skill_config import DynamicComposioSkills
+from framework.api_management import api_manager
+from framework.main import DigitalBeing
+from framework.skill_config import DynamicComposioSkills
 
 logger = logging.getLogger(__name__)
 
@@ -564,7 +567,7 @@ class DigitalBeingServer:
                 return {"success": True, "skills": all_skills}
 
             elif command == "get_activity_code":
-                from .activity_loader import read_activity_code
+                from activity_loader import read_activity_code
                 activity_name = params.get("activity_name")
                 code_str = read_activity_code(activity_name)
                 if code_str is None:
@@ -575,7 +578,7 @@ class DigitalBeingServer:
                 return {"success": True, "code": code_str}
 
             elif command == "save_activity_code":
-                from .activity_loader import write_activity_code
+                from activity_loader import write_activity_code
                 activity_name = params.get("activity_name")
                 new_code = params.get("new_code")
                 ok = write_activity_code(activity_name, new_code)
@@ -740,7 +743,7 @@ class DigitalBeingServer:
             raise
 
     @app.route('/health')
-    def health_check(self):
+    def health_check():
         return jsonify({"status": "healthy"}), 200
 
 

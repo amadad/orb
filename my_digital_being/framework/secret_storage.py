@@ -163,7 +163,7 @@ class SecretManager:
         if success:
             # Also set any other skills that use the same key
             try:
-                from framework.api_management import api_manager
+                from .api_management import api_manager
 
                 all_skills = api_manager.get_required_keys()
                 for other_skill, required_keys in all_skills.items():
