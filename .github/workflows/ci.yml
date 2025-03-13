@@ -1,4 +1,4 @@
-name: Simple CI Pipeline
+name: CI/CD Pipeline
 
 on:
   push:
@@ -7,16 +7,16 @@ on:
     branches: [main]
 
 jobs:
-  build:
-    runs-on: ubuntu-22.04
+  build-and-test:
+    runs-on: ubuntu-latest
 
     steps:
       # 1. Checkout Repository
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      # 2. Set up Python
-      - name: Set up Python
+      # 2. Set up Python 3.9
+      - name: Set up Python 3.9
         uses: actions/setup-python@v4
         with:
           python-version: "3.9"
@@ -30,21 +30,12 @@ jobs:
           pip install -r requirements.txt
           pip install selenium pytest-asyncio pytest requests aiohttp
 
-      # 4. Copy Sample Configs to Config Directory (Adjust as needed)
-      - name: Copy Sample Configs
+      # 4. Setup Config Directory
+      - name: Setup Config Directory
         run: |
           mkdir -p my_digital_being/config
-          cp my_digital_being/config_sample/*.json my_digital_being/config/
 
-      # 5. Set Dummy API Keys in Config Files (Adjust if needed)
-      - name: Set Dummy API Keys
-        run: |
-          sed -i 's/"COMPOSIO_API_KEY": ".*"/"COMPOSIO_API_KEY": ""/' my_digital_being/config/character_config.json
-          sed -i 's/"LITELLM_API_KEY": ".*"/"LITELLM_API_KEY": ""/' my_digital_being/config/skills_config.json
-          sed -i 's/"OPENAI_API_KEY": ".*"/"OPENAI_API_KEY": ""/' my_digital_being/config/skills_config.json
-          sed -i 's/"TWITTER_API_KEY": ".*"/"TWITTER_API_KEY": ""/' my_digital_being/config/skills_config.json
-
-      # 6. Install Chrome and Chromedriver
+      # 5. Install Chrome and Chromedriver
       - name: Install Chrome and Chromedriver
         run: |
           sudo apt-get update
@@ -57,11 +48,9 @@ jobs:
           fi
           sudo ln -s /usr/lib/chromium-browser/chromedriver /usr/bin/chromedriver
 
-      # 7. Set Environment Variables for Testing
-      - name: Set Environment Variables
-        run: echo "COMPOSIO_API_KEY=dummy_value" >> $GITHUB_ENV
-
-      # 8. Run Tests
+      # 6. Run Tests
       - name: Run Tests
+        env:
+          COMPOSIO_API_KEY: ${{ secrets.COMPOSIO_API_KEY }}
         run: |
           pytest tests/ --maxfail=5 --disable-warnings
