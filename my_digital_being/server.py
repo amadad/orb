@@ -20,6 +20,7 @@ from datetime import datetime
 import websockets
 from websockets.server import serve
 from websockets.legacy.server import WebSocketServerProtocol
+from flask import Flask, jsonify
 
 # Initialize the logger with logging.INFO before importing other modules
 # to make sure INFO level logs are printed (Otherwise it gets set to WARN)
@@ -737,6 +738,10 @@ class DigitalBeingServer:
         except Exception as e:
             logger.error(f"Failed to start server: {e}")
             raise
+
+    @app.route('/health')
+    def health_check(self):
+        return jsonify({"status": "healthy"}), 200
 
 
 if __name__ == "__main__":
