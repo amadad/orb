@@ -10,8 +10,7 @@ from framework.memory import Memory
     name="promote_givecare_content",
     energy_cost=0.4,
     cooldown=86400,  # 24 hours
-    required_skills=["serper_api", "chat_skill"],
-    triggers=["schedule", "manual"]
+    required_skills=["serper_api", "chat_skill"]
 )
 class PromoteGiveCareContentActivity(ActivityBase):
     """
@@ -22,6 +21,12 @@ class PromoteGiveCareContentActivity(ActivityBase):
     def __init__(self):
         super().__init__()
         self.memory = Memory()
+        # Store supported trigger types as class attribute
+        self.supported_triggers = ["schedule", "manual"]
+        # Parameters
+        self.max_promotion_count = 5  # Max per day
+        self.promotion_ratio = 0.3    # Ratio of new to reposted
+        self.max_repost_age = 30      # Max age in days for reposting
         self.givecare_url = "https://www.givecareapp.com/news"
         self.categories = [
             "Product", "Advocacy", "Resources", 

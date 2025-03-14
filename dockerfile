@@ -1,35 +1,47 @@
-FROM --platform=linux/amd64 python:3.9-slim
+FROM python:3.9-slim
 
 WORKDIR /app
 
-ENV DEBIAN_FRONTEND=noninteractive
-ENV PYTHONUNBUFFERED=1
-ENV PORT=8000
-
-# Install basic dependencies
+# Install system dependencies
 RUN apt-get update && \
-    apt-get upgrade -y && \
     apt-get install -y --no-install-recommends \
     build-essential \
-    curl && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+    curl \
+    && rm -rf /var/lib/apt/lists/*
 
-# Upgrade pip
-RUN pip install --upgrade pip
-
-# Copy requirements first for better caching
+# Copy requirements first to leverage Docker cache
 COPY requirements.txt .
-RUN pip install -r requirements.txt gunicorn
+RUN pip install --no-cache-dir -r requirements.txt gunicorn
 
-# Copy the entire application
+# Create necessary directories if they don't exist
+RUN mkdir -p my_digital_being/config my_digital_being/static my_digital_being/storage storage
+
+# Copy application code
 COPY . .
 
-# Create necessary directories
-RUN mkdir -p my_digital_being/config my_digital_being/static my_digital_being/activities my_digital_being/skills
+# Copy composio_oauth.json file into the container if it exists locally
+COPY my_digital_being/storage/composio_oauth.json /app/my_digital_being/storage/composio_oauth.json
 
-# Expose port for web UI
+# Create a symbolic link for the entire storage directory
+# This ensures files are accessible from both /app/storage and /app/my_digital_being/storage paths
+# which is required by the application for proper OAuth file access
+RUN rm -rf /app/storage && ln -sf /app/my_digital_being/storage /app/storage
+
+# Create a health file in the static directory
+RUN touch /app/my_digital_being/static/health
+
+# Set environment variables
+ENV PORT=8000
+ENV PYTHONPATH=/app
+ENV FLASK_APP=my_digital_being.server
+ENV OAUTH_FILE_PATH=/app/my_digital_being/storage/composio_oauth.json
+
+# Health check to ensure the application is responding
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+  CMD curl -f http://localhost:8000/ || exit 1
+
+# Expose the port
 EXPOSE 8000
 
-# Use a simpler command that's more likely to work
-CMD gunicorn app:app --bind 0.0.0.0:8000
+# Run the server directly with Python to enable both HTTP and WebSocket functionality
+CMD ["python", "-m", "my_digital_being.server"]

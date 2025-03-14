@@ -15,8 +15,7 @@ logger = logging.getLogger(__name__)
     name="fetch_news",
     energy_cost=0.5,
     cooldown=28800,  # 8 hours
-    required_skills=["serper_api", "chat_skill"],
-    triggers=["schedule", "conversation", "content_creation"]
+    required_skills=["serper_api", "chat_skill"]
 )
 class FetchNewsActivity(ActivityBase):
     """
@@ -34,6 +33,8 @@ class FetchNewsActivity(ActivityBase):
             "caregiver mental health",
             "respite care services"
         ]
+        # Store the supported trigger types as a class attribute instead
+        self.supported_triggers = ["schedule", "conversation", "content_creation"]
         
     async def _analyze_article_relevance(self, article: Dict[str, Any]) -> float:
         """Use chat skill to analyze article relevance for caregivers."""
@@ -105,6 +106,11 @@ class FetchNewsActivity(ActivityBase):
             # Get context from trigger
             trigger_type = shared_data.get("trigger_type", "schedule")
             trigger_context = shared_data.get("trigger_context", {})
+            
+            # Validate trigger type
+            if trigger_type not in self.supported_triggers:
+                logger.warning(f"Unsupported trigger type: {trigger_type}. Using default 'schedule'.")
+                trigger_type = "schedule"
             
             # Adjust topics based on trigger
             topics = self.default_topics.copy()

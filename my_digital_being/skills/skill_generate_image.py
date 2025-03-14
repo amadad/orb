@@ -17,6 +17,7 @@ class ImageGenerationSkill:
     def __init__(self, config: Dict[str, Any]):
         """Initialize the image generation skill with secure API key handling."""
         self.enabled = config.get("enabled", False)
+        logger.info(f"ImageGenerationSkill initialized with enabled={self.enabled}")
         self.max_generations = config.get("max_generations_per_day", 50)
         self.supported_formats = config.get("supported_formats", ["png", "jpg"])
         self.generations_count = 0
@@ -38,6 +39,7 @@ class ImageGenerationSkill:
                 return False
                 
             self._initialized = True
+            logger.debug(f"Image generation skill initialized successfully. enabled={self.enabled}")
             return True
         except Exception as e:
             logger.error(f"Failed to initialize image generation skill: {e}")
@@ -50,13 +52,14 @@ class ImageGenerationSkill:
             return False
             
         if not self.enabled:
-            logger.warning("Image generation is disabled")
+            logger.warning(f"Image generation is disabled (enabled={self.enabled})")
             return False
 
         if self.generations_count >= self.max_generations:
             logger.warning("Daily generation limit reached")
             return False
 
+        logger.debug(f"Image generation is allowed (enabled={self.enabled}, generations={self.generations_count}/{self.max_generations})")
         return True
 
     def _enhance_prompt(self, prompt: str, content_type: Optional[str] = None) -> str:

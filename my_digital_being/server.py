@@ -151,6 +151,15 @@ class DigitalBeingServer:
             if not isinstance(path, str):
                 return None
 
+            # Special case for health check
+            if path == "/health" or path == "health":
+                logger.info("Health check request")
+                return (
+                    http.HTTPStatus.OK,
+                    [("Content-Type", "application/json")],
+                    b'{"status": "healthy"}'
+                )
+
             request_path = "/" + path.lstrip("/")
             if request_path == "/":
                 request_path = "/index.html"
@@ -567,7 +576,7 @@ class DigitalBeingServer:
                 return {"success": True, "skills": all_skills}
 
             elif command == "get_activity_code":
-                from activity_loader import read_activity_code
+                from framework.activity_loader import read_activity_code
                 activity_name = params.get("activity_name")
                 code_str = read_activity_code(activity_name)
                 if code_str is None:
@@ -578,7 +587,7 @@ class DigitalBeingServer:
                 return {"success": True, "code": code_str}
 
             elif command == "save_activity_code":
-                from activity_loader import write_activity_code
+                from framework.activity_loader import write_activity_code
                 activity_name = params.get("activity_name")
                 new_code = params.get("new_code")
                 ok = write_activity_code(activity_name, new_code)
@@ -745,6 +754,22 @@ class DigitalBeingServer:
     @app.route('/health')
     def health_check():
         return jsonify({"status": "healthy"}), 200
+
+    @app.route('/')
+    def index():
+        """Serve the index.html file for the root path."""
+        from flask import send_from_directory
+        import os
+        static_dir = os.path.join(os.path.dirname(__file__), 'static')
+        return send_from_directory(static_dir, 'index.html')
+
+    @app.route('/<path:path>')
+    def serve_static(path):
+        """Serve static files."""
+        from flask import send_from_directory
+        import os
+        static_dir = os.path.join(os.path.dirname(__file__), 'static')
+        return send_from_directory(static_dir, path)
 
 
 if __name__ == "__main__":

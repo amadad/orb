@@ -31,8 +31,8 @@ class PersonalizedEmotionalSupportActivity(ActivityBase):
             # Initialize and use the image_generation skill for visual encouragements
             if not await image_generation_skill.initialize():
                 return ActivityResult.error_result("Image generation skill not available")
-            visual_message = "You are strong and resilient."
-            image_response = await image_generation_skill.generate_image(prompt=visual_message, style="calming")
+            visual_message = "You are strong and resilient. Calming landscape."
+            image_response = await image_generation_skill.generate_image(prompt=visual_message)
 
             # Initialize and use the lite_llm skill for resource navigation assistance
             if not await lite_llm_skill.initialize():

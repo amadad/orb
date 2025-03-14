@@ -5,6 +5,7 @@ from typing import Dict, Any
 from framework.activity_decorator import activity, ActivityBase, ActivityResult
 from skills.skill_generate_image import ImageGenerationSkill
 from framework.api_management import api_manager
+from skills.skill_image_generation import image_generation_skill
 
 logger = logging.getLogger(__name__)
 
@@ -26,17 +27,17 @@ class DrawActivity(ActivityBase):
         try:
             logger.info("Starting drawing activity")
 
-            # Initialize the image generation skill with configuration
-            image_skill = ImageGenerationSkill(
-                {
-                    "enabled": True,
-                    "max_generations_per_day": 50,
-                    "supported_formats": ["png", "jpg"],
-                }
-            )
-
+            # First, initialize the skill
+            if not await image_generation_skill.initialize():
+                error_msg = "Failed to initialize image generation skill"
+                logger.error(error_msg)
+                return ActivityResult(success=False, error=error_msg)
+                
+            # Explicitly set enabled to True to ensure it can generate images
+            image_generation_skill.enabled = True
+            
             # Verify the skill can generate images
-            if not await image_skill.can_generate():
+            if not await image_generation_skill.can_generate():
                 error_msg = "Image generation is not available at this time"
                 logger.error(error_msg)
                 return ActivityResult(success=False, error=error_msg)
@@ -45,17 +46,18 @@ class DrawActivity(ActivityBase):
             prompt = self._generate_prompt(shared_data)
 
             # Generate the image
-            result = await image_skill.generate_image(
+            result = await image_generation_skill.generate_image(
                 prompt=prompt, size=self.default_size, format=self.default_format
             )
 
             if result.get("success"):
                 # Store the generated image data
-                shared_data.set(
-                    "memory",
-                    f"drawing_{result['image_data']['generation_id']}",
-                    {"prompt": prompt, "image_data": result["image_data"]},
-                )
+                if shared_data:
+                    shared_data.set(
+                        "memory",
+                        f"drawing_{result['image_data']['generation_id']}",
+                        {"prompt": prompt, "image_data": result["image_data"]},
+                    )
 
                 logger.info(f"Successfully generated image for prompt: {prompt}")
                 return ActivityResult(
@@ -78,9 +80,14 @@ class DrawActivity(ActivityBase):
 
     def _generate_prompt(self, shared_data) -> str:
         """Generate a drawing prompt based on current state and memory."""
-        state = shared_data.get("state", "current_state", {})
-        personality = state.get("personality", {})
-        mood = state.get("mood", "neutral")
+        if shared_data:
+            state = shared_data.get("state", "current_state", {})
+            personality = state.get("personality", {})
+            mood = state.get("mood", "neutral")
+        else:
+            # Default values if shared_data is None
+            personality = {}
+            mood = "neutral"
 
         # Base prompts for different moods
         mood_prompts = {

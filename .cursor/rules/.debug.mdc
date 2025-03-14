@@ -1,0 +1,80 @@
+1. **Docker Commands**:
+
+```bash
+# Build the Docker image
+docker build -t digital-orb .
+
+# Run the Docker container
+docker run -d -p 8000:8000 digital-orb
+
+# View running containers
+docker ps
+
+# View logs from the container
+docker logs $(docker ps -q --filter "publish=8000")
+
+# Restart the container
+docker restart $(docker ps -q --filter "publish=8000")
+
+# Stop the container
+docker stop $(docker ps -q --filter "publish=8000")
+
+# Remove the container
+docker rm $(docker ps -q --filter "publish=8000")
+```
+
+2. **Test Commands**:
+
+```bash
+# Run all tests
+python -m pytest
+
+# Run tests with verbose output
+python -m pytest -v
+
+# Run tests in a specific file
+python -m pytest tests/test_specific_file.py
+
+# Run tests with coverage report
+python -m pytest --cov=my_digital_being
+
+# Run tests and generate HTML coverage report
+python -m pytest --cov=my_digital_being --cov-report=html
+```
+
+3. **Development Environment Setup**:
+
+```bash
+# Create and activate virtual environment
+python -m venv venv
+source venv/bin/activate  # On Unix/macOS
+.\venv\Scripts\activate   # On Windows
+
+# Install dependencies
+pip install -r requirements.txt
+pip install -r requirements-dev.txt  # If you have separate dev requirements
+```
+
+4. **Docker Compose** (if you're using docker-compose):
+
+```bash
+# Start all services
+docker-compose up -d
+
+# Stop all services
+docker-compose down
+
+# View logs
+docker-compose logs
+
+# Rebuild and start services
+docker-compose up -d --build
+```
+
+Remember to:
+1. Make sure you're in the project root directory when running these commands
+2. Have Docker installed and running on your machine
+3. Have all required environment variables set in your `.env` file
+4. Have Python and pip installed for running tests locally
+
+Let me know if you need any clarification on any of these commands!

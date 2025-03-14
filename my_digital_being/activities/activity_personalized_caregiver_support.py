@@ -6,6 +6,9 @@ from framework.activity_decorator import activity, ActivityBase, ActivityResult
 from skills import registry
 from framework.memory import Memory
 
+# Define logger at the module level
+logger = logging.getLogger(__name__)
+
 @activity(
     name="personalized_caregiver_support",
     energy_cost=0.8,
@@ -22,7 +25,6 @@ class PersonalizedCaregiverSupportActivity(ActivityBase):
 
     async def execute(self, shared_data) -> ActivityResult:
         try:
-            logger = logging.getLogger(__name__)
             logger.info("Executing PersonalizedCaregiverSupportActivity")
             
             # Check if we've recently posted a similar tweet
