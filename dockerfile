@@ -19,9 +19,6 @@ RUN mkdir -p my_digital_being/config my_digital_being/static my_digital_being/st
 # Copy application code
 COPY . .
 
-# Copy composio_oauth.json file into the container if it exists locally
-COPY my_digital_being/storage/composio_oauth.json /app/my_digital_being/storage/composio_oauth.json
-
 # Create a symbolic link for the entire storage directory
 # This ensures files are accessible from both /app/storage and /app/my_digital_being/storage paths
 # which is required by the application for proper OAuth file access
